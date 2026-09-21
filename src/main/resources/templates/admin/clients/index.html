@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clientes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body class="bg-slate-50">
+    <header class="border-b bg-white">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        <a href="/admin/clients" class="font-extrabold">Livraria LES</a>
+        <a href="/admin/clients/new" class="text-sm font-semibold text-slate-600">Novo cliente</a>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-4 py-8">
+      <div class="mb-6 flex items-end justify-between">
+        <h1 class="text-3xl font-black">Clientes</h1>
+        <a href="/admin/clients/new" class="rounded-xl bg-slate-900 px-4 py-3 font-bold text-white">Novo cliente</a>
+      </div>
+
+      <form method="get" class="mb-6 grid gap-3 md:grid-cols-5">
+        <input name="code" class="rounded-xl border px-3 py-2" placeholder="Código">
+        <input name="name" class="rounded-xl border px-3 py-2" placeholder="Nome">
+        <input name="cpf" class="rounded-xl border px-3 py-2" placeholder="CPF">
+        <input name="email" class="rounded-xl border px-3 py-2" placeholder="E-mail">
+        <select name="status" class="rounded-xl border px-3 py-2">
+          <option value="">Status</option>
+          <option value="ATIVO">ATIVO</option>
+          <option value="INATIVO">INATIVO</option>
+        </select>
+        <button class="rounded-xl bg-slate-900 px-4 py-2 font-semibold text-white md:col-span-5 md:justify-self-end">Filtrar</button>
+      </form>
+
+      <div class="overflow-hidden rounded-2xl border bg-white">
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-slate-50">
+              <tr>
+                <th class="p-3 text-left">Código</th>
+                <th class="p-3 text-left">Nome</th>
+                <th class="p-3 text-left">CPF</th>
+                <th class="p-3 text-left">E-mail</th>
+                <th class="p-3 text-left">Telefone</th>
+                <th class="p-3 text-left">Ranking</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3"></th>
+              </tr>
+            </thead>
+              <tbody id="tbody">
+                <tr th:each="client : ${clients}" class="border-t" data-client
+                  th:attr="data-code=${client.code},data-name=${client.name},data-cpf=${client.cpf},data-email=${client.email},data-status=${client.status}">
+                  <td class="p-3" th:text="${client.code}">C001</td>
+                  <td class="p-3 font-semibold" th:text="${client.name}">Cliente</td>
+                  <td class="p-3" th:text="${client.cpf}">000.000.000-00</td>
+                  <td class="p-3" th:text="${client.email}">cliente@example.com</td>
+                  <td class="p-3" th:text="${client.phone}">(00) 00000-0000</td>
+                  <td class="p-3" th:text="${client.rank}">0</td>
+                  <td class="p-3"><span class="rounded-full px-2 py-1 text-xs font-bold" th:text="${client.status}">ATIVO</span></td>
+                  <td class="p-3"><a th:href="@{/admin/clients/{code}(code=${client.code})}" class="rounded-lg border px-3 py-2 text-xs font-semibold">Visualizar</a></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(clients)}"><td colspan="8" class="p-6 text-center text-slate-500">Nenhum cliente cadastrado.</td></tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+  </body>
+</html>

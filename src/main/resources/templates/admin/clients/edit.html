@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Editar cliente</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="/css/app.css"><script src="/js/client-masks.js" defer></script></head>
+  <body class="bg-slate-50">
+    <header class="border-b bg-white"><div class="mx-auto flex max-w-5xl justify-between px-4 py-3"><a href="/admin/clients" class="font-extrabold">Livraria LES</a><a th:href="@{/admin/clients/{code}(code=${clientCode})}" class="text-sm font-semibold text-slate-600">Voltar</a></div></header>
+    <main class="mx-auto max-w-5xl px-4 py-8"><h1 class="mb-6 text-3xl font-black">Editar cliente</h1>
+      <form th:action="@{/admin/clients/{code}/edit(code=${clientCode})}" th:object="${clientForm}" method="post" class="grid gap-3 rounded-2xl border bg-white p-5 md:grid-cols-2">
+        <p th:if="${formError}" th:text="${formError}" class="rounded-xl border border-rose-200 bg-rose-50 p-3 text-rose-800 md:col-span-2"></p>
+        <input th:field="*{name}" required class="rounded-xl border px-3 py-2" placeholder="Nome">
+        <input th:field="*{gender}" required class="rounded-xl border px-3 py-2" placeholder="Gênero">
+        <input th:field="*{birth}" required type="date" class="rounded-xl border px-3 py-2">
+        <input th:field="*{cpf}" data-mask="cpf" inputmode="numeric" maxlength="14" required class="rounded-xl border px-3 py-2" placeholder="CPF (000.000.000-00)">
+        <input th:field="*{email}" required type="email" class="rounded-xl border px-3 py-2" placeholder="E-mail">
+        <input th:field="*{phoneType}" required class="rounded-xl border px-3 py-2" placeholder="Tipo de telefone">
+        <input th:field="*{ddd}" required class="rounded-xl border px-3 py-2" placeholder="DDD">
+        <input th:field="*{phoneNumber}" data-mask="phone" inputmode="numeric" maxlength="10" required class="rounded-xl border px-3 py-2" placeholder="Número (00000-0000)">
+        <button class="rounded-xl bg-slate-900 px-5 py-3 font-bold text-white md:col-span-2" type="submit">Salvar alterações</button>
+      </form>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${addressId == null ? 'Novo endereço' : 'Editar endereço'}">Endereço</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body class="bg-slate-50">
+    <header class="border-b bg-white"><div class="mx-auto flex max-w-5xl justify-between px-4 py-3"><a href="/admin/clients" class="font-extrabold">Livraria LES</a><a th:href="@{/admin/clients/{code}/addresses(code=${clientCode})}" class="text-sm font-semibold text-slate-600">Voltar</a></div></header>
+    <main class="mx-auto max-w-5xl px-4 py-8"><h1 class="mb-6 text-3xl font-black" th:text="${addressId == null ? 'Novo endereço' : 'Editar endereço'}">Endereço</h1>
+      <form th:action="${addressId == null ? '/admin/clients/' + clientCode + '/addresses' : '/admin/clients/' + clientCode + '/addresses/' + addressId}" th:object="${addressForm}" method="post" class="rounded-2xl border bg-white p-5">
+        <p th:if="${formError}" th:text="${formError}" class="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-rose-800"></p>
+        <div class="grid gap-3 md:grid-cols-2">
+          <input th:field="*{label}" required maxlength="100" class="rounded-xl border px-3 py-2" placeholder="Identificação (ex.: Casa)">
+          <select th:field="*{type}" required class="rounded-xl border px-3 py-2"><option value="">Tipo de endereço</option><option value="Entrega">Entrega</option><option value="Cobrança">Cobrança</option></select>
+          <select th:field="*{residenceType}" required class="rounded-xl border px-3 py-2"><option value="">Tipo de residência</option><option value="Casa">Casa</option><option value="Apartamento">Apartamento</option></select>
+          <select th:field="*{streetType}" required class="rounded-xl border px-3 py-2"><option value="">Tipo de logradouro</option><option value="Rua">Rua</option><option value="Avenida">Avenida</option><option value="Alameda">Alameda</option><option value="Travessa">Travessa</option><option value="Rodovia">Rodovia</option><option value="Praça">Praça</option></select>
+          <input th:field="*{street}" required class="rounded-xl border px-3 py-2" placeholder="Logradouro">
+          <input th:field="*{number}" required class="rounded-xl border px-3 py-2" placeholder="Número">
+          <input th:field="*{neighborhood}" required class="rounded-xl border px-3 py-2" placeholder="Bairro">
+          <input th:field="*{cep}" data-mask="cep" inputmode="numeric" maxlength="9" required class="rounded-xl border px-3 py-2" placeholder="CEP (00000-000)">
+          <select th:field="*{state}" required class="state-select rounded-xl border px-3 py-2"><option value="">Estado</option></select>
+          <select th:field="*{city}" required class="city-select rounded-xl border px-3 py-2"><option value="">Selecione o estado primeiro</option></select>
+          <input th:field="*{notes}" maxlength="255" class="rounded-xl border px-3 py-2" placeholder="Observações">
+        </div>
+        <button class="mt-5 rounded-xl bg-slate-900 px-5 py-3 font-bold text-white" type="submit">Salvar endereço</button>
+      </form>
+    </main>
+    <script src="/js/client-masks.js"></script>
+    <script>
+      const states = { AC: 'Acre', AL: 'Alagoas', AP: 'Amapá', AM: 'Amazonas', BA: 'Bahia', CE: 'Ceará', DF: 'Distrito Federal', ES: 'Espírito Santo', GO: 'Goiás', MA: 'Maranhão', MT: 'Mato Grosso', MS: 'Mato Grosso do Sul', MG: 'Minas Gerais', PA: 'Pará', PB: 'Paraíba', PR: 'Paraná', PE: 'Pernambuco', PI: 'Piauí', RJ: 'Rio de Janeiro', RN: 'Rio Grande do Norte', RS: 'Rio Grande do Sul', RO: 'Rondônia', RR: 'Roraima', SC: 'Santa Catarina', SP: 'São Paulo', SE: 'Sergipe', TO: 'Tocantins' };
+      const stateSelect = document.querySelector('.state-select');
+      const citySelect = document.querySelector('.city-select');
+      const selectedState = stateSelect.value;
+      const selectedCity = citySelect.value;
+      stateSelect.insertAdjacentHTML('beforeend', Object.entries(states).map(([uf, name]) => `<option value="${uf}">${name} (${uf})</option>`).join(''));
+      stateSelect.value = selectedState;
+      async function loadCities() {
+        if (!stateSelect.value) return;
+        citySelect.disabled = true;
+        const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${stateSelect.value}/municipios`);
+        const cities = await response.json();
+        citySelect.innerHTML = '<option value="">Selecione a cidade</option>' + cities.map(city => `<option value="${city.nome}">${city.nome}</option>`).join('');
+        citySelect.value = selectedCity;
+        citySelect.disabled = false;
+      }
+      stateSelect.addEventListener('change', () => { citySelect.value = ''; loadCities(); });
+      loadCities();
+    </script>
+  </body>
+</html>

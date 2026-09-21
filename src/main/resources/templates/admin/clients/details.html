@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Detalhes do cliente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/app.css">
+  </head>
+  <body class="bg-slate-50">
+    <header class="border-b bg-white"><div class="mx-auto flex max-w-7xl justify-between px-4 py-3"><a href="/admin/clients" class="font-extrabold">Livraria LES</a><a href="/admin/clients" class="text-sm font-semibold text-slate-600">Voltar</a></div></header>
+    <main class="mx-auto max-w-7xl px-4 py-8">
+      <div class="mb-6 flex items-end justify-between">
+        <div><p class="text-sm text-slate-500">Cliente <span th:text="${client.code}">C001</span></p><h1 class="text-3xl font-black" th:text="${client.name}">Cliente</h1><a th:href="@{/admin/clients/{code}/edit(code=${client.code})}" class="text-sm font-semibold text-slate-600">Editar dados</a></div>
+        <span class="rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800" th:text="${client.status}">ATIVO</span>
+      </div>
+      <div class="mt-6 flex gap-3">
+        <form th:if="${client.status == 'ATIVO'}" th:action="@{/admin/clients/{code}/inactivate(code=${client.code})}" method="post"><button class="rounded-xl border border-rose-200 px-4 py-3 font-semibold text-rose-700">Inativar cliente</button></form>
+        <form th:if="${client.status == 'INATIVO'}" th:action="@{/admin/clients/{code}/delete(code=${client.code})}" method="post"><button class="rounded-xl border border-rose-200 px-4 py-3 font-semibold text-rose-700">Excluir cliente</button></form>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        <section class="rounded-2xl border bg-white p-5"><h2 class="font-bold">Dados</h2><div class="mt-3 grid gap-3 text-sm sm:grid-cols-2"><div>CPF<br><b th:text="${client.cpf}">000.000.000-00</b></div><div>E-mail<br><b th:text="${client.email}">cliente@example.com</b></div><div>Telefone<br><b th:text="${client.phone}">(00) 00000-0000</b></div><div>Ranking<br><b th:text="${client.rank}">0</b></div><div>Nascimento<br><b th:text="${#temporals.format(client.birth, 'dd/MM/yyyy')}">26/02/2005</b></div></div></section>
+        <section class="rounded-2xl border bg-white p-5"><div class="flex items-center justify-between"><h2 class="font-bold">Endereços</h2><a th:href="@{/admin/clients/{code}/addresses(code=${client.code})}" class="text-sm font-semibold">Gerenciar</a></div><div class="mt-3 space-y-3"><div th:each="address : ${client.addresses}" class="rounded-xl border p-3 text-sm"><b th:text="${address.label}">Casa</b> (<span th:text="${address.type}">Entrega</span>)<div><span th:text="${address.streetType}">Rua</span> <span th:text="${address.street}">Flores</span>, <span th:text="${address.number}">10</span></div><div><span th:text="${address.neighborhood}">Centro</span>, <span th:text="${address.city}">São Paulo</span> / <span th:text="${address.state}">SP</span>, <span th:text="${address.country}">Brasil</span></div></div></div></section>
+        <section class="rounded-2xl border bg-white p-5"><div class="flex items-center justify-between"><h2 class="font-bold">Cartões</h2><a th:href="@{/admin/clients/{code}/cards(code=${client.code})}" class="text-sm font-semibold">Gerenciar</a></div><div class="mt-3 space-y-2"><div th:each="card : ${client.cards}" class="rounded-xl border p-3 text-sm"><span th:text="${card.brand.name}">Visa</span> final <span th:text="${card.lastFour}">1234</span><span th:if="${card.preferred}" class="ml-2 font-bold text-emerald-700">Preferencial</span></div><p th:if="${#lists.isEmpty(client.cards)}" class="text-sm text-slate-500">Nenhum cartão cadastrado.</p></div></section>
+      </div>
+      <section class="mt-6 rounded-2xl border bg-white p-5"><h2 class="font-bold">Alterar senha</h2><p th:if="${passwordError}" th:text="${passwordError}" class="mt-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-rose-800"></p><form th:action="@{/admin/clients/{code}/password(code=${client.code})}" th:object="${passwordForm}" method="post" class="mt-3 grid gap-3 md:grid-cols-2"><input th:field="*{password}" required type="password" minlength="8" class="rounded-xl border px-3 py-2" placeholder="Nova senha"><input th:field="*{confirmation}" required type="password" minlength="8" class="rounded-xl border px-3 py-2" placeholder="Confirmação"><button class="rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white md:col-span-2">Salvar senha</button></form></section>
+    </main>
+  </body>
+</html>

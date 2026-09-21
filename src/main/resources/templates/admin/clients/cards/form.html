@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${cardId == null ? 'Novo cartão' : 'Editar cartão'}">Cartão</title><script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="/css/app.css"></head>
+  <body class="bg-slate-50">
+    <header class="border-b bg-white"><div class="mx-auto flex max-w-5xl justify-between px-4 py-3"><a href="/admin/clients" class="font-extrabold">Livraria LES</a><a th:href="@{/admin/clients/{code}/cards(code=${clientCode})}" class="text-sm font-semibold text-slate-600">Voltar</a></div></header>
+    <main class="mx-auto max-w-2xl px-4 py-8"><h1 class="mb-6 text-3xl font-black" th:text="${cardId == null ? 'Novo cartão' : 'Editar cartão'}">Cartão</h1>
+      <form th:action="${cardId == null ? '/admin/clients/' + clientCode + '/cards' : '/admin/clients/' + clientCode + '/cards/' + cardId}" th:object="${cardForm}" method="post" class="rounded-2xl border bg-white p-5">
+        <p th:if="${formError}" th:text="${formError}" class="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-rose-800"></p>
+        <div class="grid gap-3">
+          <input th:field="*{number}" inputmode="numeric" maxlength="19" th:required="${cardId == null}" class="rounded-xl border px-3 py-2" placeholder="Número do cartão">
+          <input th:field="*{holderName}" required class="rounded-xl border px-3 py-2" placeholder="Nome impresso no cartão">
+          <select th:field="*{brand}" required class="rounded-xl border px-3 py-2"><option value="">Bandeira</option><option th:each="brand : ${brands}" th:value="${brand.name}" th:text="${brand.name}">Visa</option></select>
+          <input th:field="*{securityCode}" inputmode="numeric" maxlength="4" th:required="${cardId == null}" class="rounded-xl border px-3 py-2" placeholder="Código de segurança">
+          <label class="flex items-center gap-2 text-sm font-semibold"><input th:field="*{preferred}" type="checkbox" class="h-4 w-4"> Definir como cartão preferencial</label>
+        </div>
+        <p class="mt-3 text-xs text-slate-500">Por segurança, o número completo e o código de segurança não são exibidos após o cadastro.</p>
+        <button class="mt-5 rounded-xl bg-slate-900 px-5 py-3 font-bold text-white">Salvar cartão</button>
+      </form>
+    </main>
+  </body>
+</html>
